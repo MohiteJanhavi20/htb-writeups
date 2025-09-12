@@ -1,0 +1,8 @@
+**/outputs/*
+**/screenshots/**.key
+*.pem
+*.env
+.vscode/
+__pycache__/
+.DS_Store
+Thumbs.db
