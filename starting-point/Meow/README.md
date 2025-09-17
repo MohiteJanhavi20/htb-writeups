@@ -1,56 +1,81 @@
-# HTB — Meow (Starting Point)
+    # HTB — Meow (Starting Point)
 
 **Author:** Janhavi Mohite  
-**Date:**  20/03/2005 
-**Difficulty:** Starting Point
+**Date:**  17/09/2025 
+**Difficulty:** Easy
+**Objective:** Gain access to the target machine and capture the user flag.
 
 ---
 
-## 📝 Summary
-Gained initial foothold via a web vector (file upload / RCE / vulnerable endpoint), then escalated to root via local misconfig/credentials.  
+##  Summary
+Meow is a Starting Point box. An exposed Telnet service (port 23) allowed a blank login for `root`, providing immediate full access. I performed network/service enumeration with `nmap`, connected via `telnet` to obtain a shell, and confirmed root privileges with basic enumeration. Flags are redacted in this public writeup
 
 ---
 
-## 🎯 Target
-- **IP Address:** <IP>
-- **Top services:** (example) `80/tcp (http)`, `22/tcp (ssh)`
+## Target
+- **IP Address:** 10.129.76.140
+- **Top services:** 23/tcp (telnet)
 
 ---
 
-## 🔍 Reconnaissance
-Commands I ran:
+## 2️⃣ Enumeration 
+Performed a full port scan using Nmap:
 
-Key findings:
-- Web endpoints: `/`, `/upload`, `/admin` (fill what you saw)
-- Any suspicious headers or versions: `<note here>`
+```bash
+nmap -sV -sC -p- <IP>
+Found an open Telnet service.
 
----
+Connected to the Telnet service:
 
-## 💥 Exploitation (Initial foothold)
-Steps I followed (recreate or describe from memory):
-1. Found an upload point at `/upload`. Tested allowed extensions and size limits.
-2. Bypassed extension check by renaming `shell.php` to `shell.php7` or using polyglot.  
-   Example exploit commands:
+bash
+Copy code
+telnet <IP> <PORT>
 
-3. Upgraded the shell (if applicable):
+--
 
-Basic enumeration:
+## 3️⃣ Exploitation 
+Login attempt using default credentials:
+makefile
+Copy code
+Username: root
+Password: <blank>
+Successfully logged in.
 
-Escalation path (explain what worked for you):
-- e.g., `sudo -l` showed `NOPASSWD` for `/usr/bin/somebinary` → exploited to get root.
-- OR found credentials in `/home/<user>/notes.txt` → used to `su`/`ssh`.
+--
 
-Proof (redacted):
-- `user.txt` → `REDACTED{user_flag}`
-- `root.txt` → `REDACTED{root_flag}`
+## 4️⃣ Post-Exploitation 
+Verified user privileges:
 
----
+bash
+Copy code
+id
+Listed files in the current directory:
 
-## 🛡️ Mitigation
-- Disable insecure file uploads or validate file contents server-side.  
-- Fix `sudo` misconfig / rotate leaked credentials / remove SUID where not needed.
+bash
+Copy code
+ls -la
+Navigated to the flag and read it:
 
----
+bash
+Copy code
+cd <directory>
+cat flag.txt
+Flag captured and submitted.
 
-## 📚 References
-- Any blog, PortSwigger, or exploit-db entries you used (paste links).
+--
+
+## 5️⃣ Observations & Notes 
+
+The machine was easily accessible due to weak/default credentials.
+
+No advanced exploitation or privilege escalation was required.
+
+Demonstrates the importance of strong passwords and avoiding default credentials.
+
+## 6️⃣ Conclusion 
+
+Successfully enumerated the machine, gained access using Telnet, and captured the user flag.
+
+This lab reinforces a fundamental cybersecurity lesson: always use strong passwords and secure services.
+
+
