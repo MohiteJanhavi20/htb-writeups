@@ -1,8 +1,11 @@
     # HTB — Meow (Starting Point)
 
-**Author:** Janhavi Mohite  
-**Date:**  17/09/2025 
+**Author:** Janhavi Mohite
+  
+**Date:**  17/09/2025
+ 
 **Difficulty:** Easy
+
 **Objective:** Gain access to the target machine and capture the user flag.
 
 ---
@@ -20,49 +23,50 @@ Meow is a Starting Point box. An exposed Telnet service (port 23) allowed a blan
 
 ## 2️⃣ Enumeration 
 Performed a full port scan using Nmap:
-
 ```bash
 nmap -sV -sC -p- <IP>
+```
 Found an open Telnet service.
 
 Connected to the Telnet service:
-
-bash
-Copy code
+```bash
 telnet <IP> <PORT>
+```
 
---
+---
 
-## 3️⃣ Exploitation 
-Login attempt using default credentials:
-makefile
-Copy code
+## 3️⃣ Exploitation
+```bash 
 Username: root
 Password: <blank>
+```
 Successfully logged in.
 
---
+---
 
-## 4️⃣ Post-Exploitation 
+## 4️⃣ Post-Exploitation
+ 
 Verified user privileges:
 
-bash
-Copy code
+
+```bash
 id
+```
 Listed files in the current directory:
 
-bash
-Copy code
+
+```bash
 ls -la
+```
 Navigated to the flag and read it:
 
-bash
-Copy code
+```bash
 cd <directory>
 cat flag.txt
+```
 Flag captured and submitted.
 
---
+---
 
 ## 5️⃣ Observations & Notes 
 
@@ -71,6 +75,8 @@ The machine was easily accessible due to weak/default credentials.
 No advanced exploitation or privilege escalation was required.
 
 Demonstrates the importance of strong passwords and avoiding default credentials.
+
+---
 
 ## 6️⃣ Conclusion 
 
