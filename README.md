@@ -5,7 +5,7 @@ Aspiring Cybersecurity Professional | BCA Student | Ethical Hacking & AI Enthusi
 - Nmap, Burp Suite, Metasploit, Wireshark
 - Python, Bash, Git, Linux (Kali, Ubuntu)
 
-##  Projects & Writeups
+##  Writeups
 - **[HTB: Meow](starting-point/Meow)** — Telnet login → root access; privilege escalation documented with screenshots.
 - **[HTB: Fawn](starting-point/Fawn)** — FTP misconfigurations exploited for system access; full step-by-step notes.
 - **[HTB: Dancing](starting-point/Dancing)** — Enumeration + SMB exploitation; sensitive data extraction.
